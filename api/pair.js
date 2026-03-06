@@ -1,36 +1,70 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const axios = require('axios');
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import makeWASocket, { useSingleFileAuthState, MessageType } from "@adiwajshing/baileys";
+import fs from "fs-extra";
+
+const { state, saveState } = useSingleFileAuthState("./sessions/queen-bella.json");
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public')); // serve frontend
 
-// Endpoint to generate pairing code and send to WhatsApp
-app.post('/api/pair', async (req, res) => {
-  const { phone } = req.body; // user phone to link
-  if(!phone) return res.status(400).json({ error: 'Phone number required' });
+const port = process.env.PORT || 3000;
 
-  // Generate 8-digit pairing code
-  const code = Math.floor(10000000 + Math.random() * 90000000);
-
-  try {
-    // Send code to your WhatsApp via wa.me link or API
-    // Example using wa.me link (user clicks to send message to your number)
-    const whatsappLink = `https://wa.me/254755660053?text=Pairing+Code:+${code}+from+${phone}`;
-
-    res.json({
-      message: 'Pairing code generated!',
-      code,
-      whatsappLink
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to send code' });
-  }
+// Initialize WhatsApp
+const sock = makeWASocket({
+    auth: state,
+    printQRInTerminal: true
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('QUEEN BELLA Pairing API running...');
+sock.ev.on("creds.update", saveState);
+sock.ev.on("connection.update", ({ connection, lastDisconnect }) => {
+    if (connection === "close" && lastDisconnect.error?.output?.statusCode !== 401) {
+        console.log("Reconnecting...");
+    } else if (connection === "open") {
+        console.log("WhatsApp connected!");
+    }
 });
+
+// Fixed pairing code
+const PAIR_CODE = "ROYTECH4";
+
+app.post("/api/pair", async (req, res) => {
+    const { phone, code } = req.body;
+    if (!phone || !code) return res.status(400).json({ error: "Phone and code required" });
+
+    if (code !== PAIR_CODE) {
+        return res.status(403).json({ error: "Invalid pairing code" });
+    }
+
+    // Create JSON with placeholder session id
+    const sessionData = {
+        sessionId: "PLACEHOLDER_FOR_SESSION_ID",
+        footer: "𝐐𝐮𝐞𝐞𝐧 𝐁𝐞𝐥𝐥𝐚 𝐌𝐃 𝐣𝐬𝐨𝐧",
+        joinButton: "https://wa.me/254755660053"
+    };
+
+    const jsonFilePath = `./sessions/${phone}-queen-bella.json`;
+    await fs.writeJson(jsonFilePath, sessionData, { spaces: 2 });
+
+    // Send JSON file via WhatsApp
+    try {
+        await sock.sendMessage(`${phone}@s.whatsapp.net`, {
+            document: { url: jsonFilePath },
+            mimetype: "application/json",
+            fileName: "queen-bella.json",
+            caption: "𝐐𝐮𝐞𝐞𝐧 𝐁𝐞𝐥𝐥𝐚 𝐌𝐃 JSON"
+        });
+
+        res.json({ success: true, message: "JSON sent to WhatsApp!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to send JSON via WhatsApp" });
+    }
+});
+
+// Serve frontend
+app.use(express.static("public"));
+
+app.listen(port, () => console.log(`Pairing site running on http://localhost:${port}`));
