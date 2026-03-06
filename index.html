@@ -1,118 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUEEN BELLA Pairing</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #fff;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:flex-start;
-    }
-    header {
-      margin-top:30px;
-      text-align:center;
-    }
-    header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size:2.5rem;
-      background: linear-gradient(90deg,#ff6a00,#ee0979);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      margin-bottom:10px;
-    }
-    header p {
-      color:#ccc;
-      font-size:1.1rem;
-    }
-    .menu-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 15px;
-      padding: 30px 20px;
-      margin-top:30px;
-      width: 350px;
-      text-align:center;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0,255,255,0.2);
-      transition: transform 0.3s;
-    }
-    .menu-card:hover { transform: scale(1.05); }
-    .menu-card img { max-width:250px; border-radius:10px; margin-bottom:20px; }
-    input[type="text"] {
-      width:80%;
-      padding:12px;
-      margin-bottom:15px;
-      border-radius: 8px;
-      border:none;
-      outline:none;
-      font-size:1rem;
-    }
-    button {
-      padding:12px 25px;
-      font-size:1rem;
-      font-weight: bold;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-      background: linear-gradient(90deg,#ff6a00,#ee0979);
-      color:#fff;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px rgba(255,106,0,0.6);
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255,106,0,0.9);
-    }
-    #result {
-      margin-top:15px;
-      font-weight:bold;
-      font-size:1.1rem;
-      color:#00fff0;
-    }
-    footer {
-      margin-top:auto;
-      margin-bottom:20px;
-      text-align:center;
-      font-weight:bold;
-      font-size:0.9rem;
-      color:#aaa;
-    }
-    footer button {
-      margin-top:10px;
-      background: #0ff;
-      color:#000;
-      font-weight:bold;
-      padding:8px 15px;
-      border-radius:6px;
-      box-shadow:0 0 10px #0ff;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUEEN BELLA Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin:0;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #0a0a0a, #111111);
+    color: #0ff;
+  }
+  header {
+    text-align:center;
+    padding:30px;
+    font-size:2em;
+    letter-spacing:2px;
+    text-shadow:0 0 10px #0ff;
+  }
+  .cards {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    padding:20px;
+  }
+  .card {
+    background:#111;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 15px #0ff;
+    transition:0.3s;
+  }
+  .card:hover {
+    transform:scale(1.05);
+    box-shadow:0 0 30px #0ff;
+  }
+  .card h3 {
+    margin-top:0;
+    color:#0ff;
+    text-shadow:0 0 5px #0ff;
+  }
+  .card p {
+    font-size:0.9em;
+    color:#ccc;
+  }
+  .card button {
+    margin-top:10px;
+    background:#0ff;
+    color:#000;
+    font-weight:bold;
+    padding:8px 15px;
+    border-radius:6px;
+    box-shadow:0 0 10px #0ff;
+    cursor:pointer;
+  }
+  footer {
+    text-align:center;
+    padding:20px;
+    border-top:1px solid #0ff;
+    margin-top:30px;
+  }
+  footer button {
+    margin-top:10px;
+    background:#0ff;
+    color:#000;
+    font-weight:bold;
+    padding:8px 15px;
+    border-radius:6px;
+    box-shadow:0 0 10px #0ff;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <h1>QUEEN BELLA</h1>
-  <p>WhatsApp Bot Pairing Portal</p>
-</header>
+<header>QUEEN BELLA – WhatsApp Bot Dashboard</header>
 
-<div class="menu-card">
-  <img src="/menu.jpg" alt="QUEEN BELLA Menu">
-  <p>Enter your WhatsApp number to generate your 8-digit pairing code.</p>
-  <form id="pairForm">
-    <input type="text" id="phone" placeholder="e.g. +2547XXXXXXXX" required />
-    <br/>
-    <button type="submit">Generate Code</button>
-  </form>
-  <div id="result"></div>
+<div class="cards">
+  <div class="card">
+    <h3>AI Command</h3>
+    <p>Ask QUEEN BELLA any question using AI APIs.</p>
+    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/ai/ai?apikey=gifted&q=Your+Question')">Use Command</button>
+  </div>
+  
+  <div class="card">
+    <h3>Search Command</h3>
+    <p>Search Google, YouTube, Spotify and more.</p>
+    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/search/google?apikey=gifted&query=YourQuery')">Use Command</button>
+  </div>
+  
+  <div class="card">
+    <h3>Fun Commands</h3>
+    <p>Jokes, advice, pick-up lines, Valentine messages.</p>
+    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/fun/jokes?apikey=gifted')">Use Command</button>
+  </div>
+  
+  <div class="card">
+    <h3>Downloaders</h3>
+    <p>Download from YouTube, TikTok, Instagram, Spotify.</p>
+    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/download/ytmp3?apikey=gifted&url=VIDEO_URL')">Use Command</button>
+  </div>
+  
+  <!-- Add more cards for Tools, Anime, Stalker, Viral Commands -->
 </div>
 
 <footer>
@@ -121,24 +110,10 @@
 </footer>
 
 <script>
-  const form = document.getElementById('pairForm');
-  const result = document.getElementById('result');
-
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const phone = document.getElementById('phone').value;
-    const res = await fetch('/api/pair', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({phone})
-    });
-    const data = await res.json();
-    if(res.ok){
-      result.innerHTML = `Your 8-digit code: <strong>${data.code}</strong>`;
-    } else {
-      result.innerHTML = `<span style="color:#ff4b4b;">Error: ${data.error}</span>`;
-    }
-  });
+function copyCommand(cmd){
+  navigator.clipboard.writeText(cmd);
+  alert('Command copied to clipboard!');
+}
 </script>
 
 </body>
