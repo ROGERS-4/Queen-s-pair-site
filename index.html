@@ -3,117 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUEEN BELLA Dashboard</title>
+<title>QUEEN BELLA Pairing</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin:0;
-    font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(135deg, #0a0a0a, #111111);
-    color: #0ff;
-  }
-  header {
-    text-align:center;
-    padding:30px;
-    font-size:2em;
-    letter-spacing:2px;
-    text-shadow:0 0 10px #0ff;
-  }
-  .cards {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-    padding:20px;
-  }
-  .card {
-    background:#111;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 15px #0ff;
-    transition:0.3s;
-  }
-  .card:hover {
-    transform:scale(1.05);
-    box-shadow:0 0 30px #0ff;
-  }
-  .card h3 {
-    margin-top:0;
-    color:#0ff;
-    text-shadow:0 0 5px #0ff;
-  }
-  .card p {
-    font-size:0.9em;
-    color:#ccc;
-  }
-  .card button {
-    margin-top:10px;
-    background:#0ff;
-    color:#000;
-    font-weight:bold;
-    padding:8px 15px;
-    border-radius:6px;
-    box-shadow:0 0 10px #0ff;
-    cursor:pointer;
-  }
-  footer {
-    text-align:center;
-    padding:20px;
-    border-top:1px solid #0ff;
-    margin-top:30px;
-  }
-  footer button {
-    margin-top:10px;
-    background:#0ff;
-    color:#000;
-    font-weight:bold;
-    padding:8px 15px;
-    border-radius:6px;
-    box-shadow:0 0 10px #0ff;
-  }
+  body { margin:0; font-family:'Orbitron',sans-serif; background:#000; color:#0ff; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; }
+  h1 { text-align:center; text-shadow:0 0 10px #0ff; }
+  form { display:flex; flex-direction:column; gap:15px; background:#111; padding:30px; border-radius:10px; box-shadow:0 0 20px #0ff; }
+  input { padding:10px; border-radius:6px; border:none; width:250px; }
+  button { padding:10px; border-radius:6px; border:none; background:#0ff; color:#000; font-weight:bold; cursor:pointer; }
+  footer { margin-top:30px; text-align:center; }
+  footer button { margin-top:10px; background:#0ff; color:#000; padding:8px 15px; border-radius:6px; cursor:pointer; }
 </style>
 </head>
 <body>
 
-<header>QUEEN BELLA – WhatsApp Bot Dashboard</header>
+<h1>QUEEN BELLA Pairing Portal</h1>
 
-<div class="cards">
-  <div class="card">
-    <h3>AI Command</h3>
-    <p>Ask QUEEN BELLA any question using AI APIs.</p>
-    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/ai/ai?apikey=gifted&q=Your+Question')">Use Command</button>
-  </div>
-  
-  <div class="card">
-    <h3>Search Command</h3>
-    <p>Search Google, YouTube, Spotify and more.</p>
-    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/search/google?apikey=gifted&query=YourQuery')">Use Command</button>
-  </div>
-  
-  <div class="card">
-    <h3>Fun Commands</h3>
-    <p>Jokes, advice, pick-up lines, Valentine messages.</p>
-    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/fun/jokes?apikey=gifted')">Use Command</button>
-  </div>
-  
-  <div class="card">
-    <h3>Downloaders</h3>
-    <p>Download from YouTube, TikTok, Instagram, Spotify.</p>
-    <button onclick="copyCommand('https://api.giftedtech.co.ke/api/download/ytmp3?apikey=gifted&url=VIDEO_URL')">Use Command</button>
-  </div>
-  
-  <!-- Add more cards for Tools, Anime, Stalker, Viral Commands -->
-</div>
+<form id="pairForm">
+  <input type="text" id="phone" placeholder="Enter your phone number" required />
+  <button type="submit">Generate Pairing Code</button>
+</form>
+
+<p id="result"></p>
 
 <footer>
-  Powered by Rodgers <br/>
+  Powered by Rodgers<br/>
   <button onclick="window.open('https://wa.me/254755660053','_blank')">Contact Us</button>
 </footer>
 
 <script>
-function copyCommand(cmd){
-  navigator.clipboard.writeText(cmd);
-  alert('Command copied to clipboard!');
-}
+const form = document.getElementById('pairForm');
+const result = document.getElementById('result');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const phone = document.getElementById('phone').value;
+
+  try {
+    const res = await fetch('/api/pair', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+
+    if(data.error) {
+      result.textContent = data.error;
+    } else {
+      result.innerHTML = `Your pairing code: <strong>${data.code}</strong> <br/>
+      <a href="${data.whatsappLink}" target="_blank">Send Code to WhatsApp</a>`;
+    }
+  } catch(err) {
+    result.textContent = 'Error generating code.';
+  }
+});
 </script>
 
 </body>
