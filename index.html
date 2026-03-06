@@ -3,60 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUEEN BELLA Pairing</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+<title>QUEEN BELLA MD Pairing</title>
 <style>
-  body { margin:0; font-family:'Orbitron',sans-serif; background:#000; color:#0ff; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; }
-  h1 { text-align:center; text-shadow:0 0 10px #0ff; }
-  form { display:flex; flex-direction:column; gap:15px; background:#111; padding:30px; border-radius:10px; box-shadow:0 0 20px #0ff; }
-  input { padding:10px; border-radius:6px; border:none; width:250px; }
-  button { padding:10px; border-radius:6px; border:none; background:#0ff; color:#000; font-weight:bold; cursor:pointer; }
-  footer { margin-top:30px; text-align:center; }
-  footer button { margin-top:10px; background:#0ff; color:#000; padding:8px 15px; border-radius:6px; cursor:pointer; }
+body { background: #0b0b0b; color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; }
+h1 { color: #00ffff; margin-top: 40px; }
+input, button { padding: 12px; margin: 10px; border-radius: 6px; border: none; }
+button { background: #ff00ff; color: #fff; cursor: pointer; }
+footer { margin-top: 40px; font-size: 14px; color: #aaa; }
+.contact-btn { display: inline-block; background: #25D366; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; }
 </style>
 </head>
 <body>
 
-<h1>QUEEN BELLA Pairing Portal</h1>
+<h1>QUEEN BELLA MD Pairing</h1>
+<p>Enter your phone and pairing code:</p>
 
-<form id="pairForm">
-  <input type="text" id="phone" placeholder="Enter your phone number" required />
-  <button type="submit">Generate Pairing Code</button>
-</form>
+<input type="text" id="phone" placeholder="+2547XXXXXXXX"><br>
+<input type="text" id="code" placeholder="Pairing Code"><br>
+<button onclick="pair()">Pair Now</button>
 
-<p id="result"></p>
+<p id="status"></p>
 
-<footer>
-  Powered by Rodgers<br/>
-  <button onclick="window.open('https://wa.me/254755660053','_blank')">Contact Us</button>
-</footer>
+<a class="contact-btn" href="https://wa.me/254755660053" target="_blank">Contact Us</a>
+
+<footer>Powered by Rodgers</footer>
 
 <script>
-const form = document.getElementById('pairForm');
-const result = document.getElementById('result');
+async function pair() {
+    const phone = document.getElementById('phone').value;
+    const code = document.getElementById('code').value;
 
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  const phone = document.getElementById('phone').value;
+    if (!phone || !code) return alert('Enter phone and code');
 
-  try {
     const res = await fetch('/api/pair', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ phone })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, code })
     });
-    const data = await res.json();
 
-    if(data.error) {
-      result.textContent = data.error;
-    } else {
-      result.innerHTML = `Your pairing code: <strong>${data.code}</strong> <br/>
-      <a href="${data.whatsappLink}" target="_blank">Send Code to WhatsApp</a>`;
-    }
-  } catch(err) {
-    result.textContent = 'Error generating code.';
-  }
-});
+    const data = await res.json();
+    document.getElementById('status').innerText = data.success ? data.message : data.error;
+}
 </script>
 
 </body>
